@@ -160,7 +160,7 @@ fetch("http://127.0.0.1:8000/api", {
   GET /api/auth/authorize
 ```
 
-Allows a user to get a device code to authenticate with Okta using Device Authorization Flow
+Allows a user to get a device code to authenticate with Okta using Device Authorization Grant. More info: https://developer.okta.com/docs/guides/device-authorization-grant/main/
 
 #### Example Requests
 
