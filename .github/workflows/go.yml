@@ -25,7 +25,7 @@ jobs:
         echo "::set-env name=VERSION::$VERSION"
     - name: Build & Test
       run: ./build.sh $VERSION
-    - name: Create GitHub Release
+    - name: Push GitHub Release
       uses: anton-yurchenko/git-release@v4.1.2
       env:
           RELEASE_NAME: ${VERSION}-alpha
