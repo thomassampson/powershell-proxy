@@ -3,8 +3,6 @@ name: Build Powershell-Proxy
 on:
   push:
     branches: [ main, pre-release ]
-  pull_request:
-    branches: [ main, pre-release ]
 
 jobs:
   test:
