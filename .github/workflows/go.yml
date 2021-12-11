@@ -14,7 +14,7 @@ jobs:
     steps:
     - name: Set Version
       run: |
-        export VERSION=$(date +%Y).$(date +%m).$(date +%d).${{env.GITHUB_RUN_NUMBER}}
+        export VERSION=$(date +%Y).$(date +%m).$(date +%d).${GITHUB_RUN_NUMBER}
         echo "Setting version to: ${VERSION}"
         echo "::set-env name=VERSION::$VERSION"
         echo $VERSION > version.txt
