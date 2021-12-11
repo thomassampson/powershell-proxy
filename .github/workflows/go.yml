@@ -1,4 +1,4 @@
-name: Go
+name: Build Powershell-Proxy
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
         prerelease: true
         name: ${VERSION}-alpha
         tag_name: ${VERSION}-alpha
