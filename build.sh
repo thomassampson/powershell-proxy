@@ -10,13 +10,13 @@ echo "
 ╚═╝      ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝       ╚═╝  ╚═╝╚═╝     ╚═╝                                                                                                                                                                                                                                                                                              
 "
 
-if [-z "$1"]; then
-    VERSION="$1"
-else
+if [ -z "$1" ]; then
 MAJOR=0
 MINOR=0
 BUILD=$(date +%s)
 VERSION="$MAJOR.$MINOR.$BUILD"
+else
+VERSION="$1"
 fi
 
 START=$(date +%s)
