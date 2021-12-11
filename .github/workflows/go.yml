@@ -10,7 +10,6 @@ jobs:
   test:
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-    needs: set_version
     runs-on: ubuntu-latest
     steps:
     - name: Download Version
