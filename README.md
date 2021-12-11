@@ -1,5 +1,7 @@
 # Powershell Proxy
 
+[![Build Powershell-Proxy](https://github.com/thomassampson/powershell-proxy/actions/workflows/go.yml/badge.svg)](https://github.com/thomassampson/powershell-proxy/actions/workflows/go.yml)
+
 Lightweight rest api that allows users to run Powershell commands over HTTP. Requests require a valid JWT and responses are returned in JSON format.
 
 ## Build
