@@ -17,10 +17,22 @@ jobs:
         export VERSION=0.0.$(date +%s)
         echo "Setting version to: ${VERSION}"
         echo "::set-env name=VERSION::$VERSION"
+        echo $VERSION > version.txt
+    - name: Upload version
+      uses: actions/upload-artifact@v2
+      with:
+        name: version
+        path: version.txt
   test:
     needs: set_version
     runs-on: ubuntu-latest
     steps:
+    - name: Download Version
+      uses: actions/download-artifact@v2
+      with:
+        name: version
+    - name: Set Version
+      run: export VERSION=$(cat version.txt)
     - uses: actions/checkout@v2
     - name: Set up Go
       uses: actions/setup-go@v2
@@ -34,6 +46,12 @@ jobs:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     runs-on: ubuntu-latest
     steps:
+    - name: Download Version
+      uses: actions/download-artifact@v2
+      with:
+        name: version
+    - name: Set Version
+      run: export VERSION=$(cat version.txt)
     - uses: actions/checkout@v2
     - name: Set up Go
       uses: actions/setup-go@v2
@@ -45,6 +63,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+    - name: Download Version
+      uses: actions/download-artifact@v2
+      with:
+        name: version
+    - name: Set Version
+      run: export VERSION=$(cat version.txt)
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
