@@ -2,42 +2,19 @@ name: Build Powershell-Proxy
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [ main, pre-release ]
 
 jobs:
-  set_version:
-    env:
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-    runs-on: ubuntu-latest
-    steps:
-    - name: Set Version
-      run: |
-        export VERSION=0.0.$(date +%s)
-        echo "Setting version to: ${VERSION}"
-        echo "::set-env name=VERSION::$VERSION"
-        echo $VERSION > version.txt
-    - name: Upload version
-      uses: actions/upload-artifact@v2
-      with:
-        name: version
-        path: version.txt
   test:
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-    needs: set_version
     runs-on: ubuntu-latest
     steps:
-    - name: Download Version
-      uses: actions/download-artifact@v2
-      with:
-        name: version
     - name: Set Version
       run: | 
-        export VERSION=$(cat version.txt) 
+        export VERSION=$(date +%Y).$(date +%m).$(date +%d).${GITHUB_RUN_NUMBER}
+        echo "Setting version to: ${VERSION}"
         echo "::set-env name=VERSION::$VERSION"
-        echo "Version: ${VERSION}"
 
     - uses: actions/checkout@v2
     - name: Set up Go
@@ -52,15 +29,11 @@ jobs:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     runs-on: ubuntu-latest
     steps:
-    - name: Download Version
-      uses: actions/download-artifact@v2
-      with:
-        name: version
     - name: Set Version
       run: | 
-        export VERSION=$(cat version.txt) 
+        export VERSION=$(date +%Y).$(date +%m).$(date +%d).${GITHUB_RUN_NUMBER}
+        echo "Setting version to: ${VERSION}"
         echo "::set-env name=VERSION::$VERSION"
-        echo "Version: ${VERSION}"
 
     - uses: actions/checkout@v2
     - name: Set up Go
@@ -85,15 +58,11 @@ jobs:
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
-    - name: Download Version
-      uses: actions/download-artifact@v2
-      with:
-        name: version
     - name: Set Version
       run: | 
-        export VERSION=$(cat version.txt) 
+        export VERSION=$(date +%Y).$(date +%m).$(date +%d).${GITHUB_RUN_NUMBER}
+        echo "Setting version to: ${VERSION}"
         echo "::set-env name=VERSION::$VERSION"
-        echo "Version: ${VERSION}"
     - name: Download Linux
       uses: actions/download-artifact@v2
       with:
@@ -102,13 +71,29 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: powershell-proxy_win_amd64.exe
-    - name: Release
+    - name:  Create Pre-Release
+      if: github.ref == 'refs/heads/pre-release'
       uses: softprops/action-gh-release@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         prerelease: true
-        name: ${{env.VERSION}}-alpha
-        tag_name: ${{env.VERSION}}-alpha
+        name: ${{env.VERSION}}-pre
+        tag_name: ${{env.VERSION}}-pre
+        fail_on_unmatched_files: true
+        generate_release_notes: true
+        files: |
+         powershell-proxy_linux_amd64
+         powershell-proxy_win_amd64.exe
+      env:
+        GITHUB_REPOSITORY: https://github.com/thomassampson/powershell-proxy
+    - name:  Create Release
+      if: github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: false
+        name: ${{env.VERSION}}
+        tag_name: ${{env.VERSION}}
         fail_on_unmatched_files: true
         generate_release_notes: true
         files: |

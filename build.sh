@@ -18,10 +18,7 @@ echo "
 "
 
 if [ -z "$1" ]; then
-MAJOR=0
-MINOR=0
-BUILD=$(date +%s)
-VERSION="$MAJOR.$MINOR.$BUILD"
+VERSION="$(date +%Y).$(date +%m).$(date +%d).$(date +%s)"
 else
 VERSION="$1"
 fi

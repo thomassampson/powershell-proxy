@@ -4,9 +4,33 @@
 
 Lightweight rest api that allows users to run Powershell commands over HTTP. Requests require a valid JWT and responses are returned in JSON format.
 
+## Test
+
+Test the application by running the test.sh script on Linux or WSL:
+
+You can pass in a version as $1 parameter if you do not want to auto-generate a version based on the timestamp.
+
+```bash
+$ ./test.sh
+
+[TESTS] 🔵 Running Tests
+
+=== RUN   TestCheckIPAddressNotValid
+--- PASS: TestCheckIPAddressNotValid (0.00s)
+021/12/11 14:02:59 INFO: IP Address: 0.0.0.0 is Valid
+--- PASS: TestValidateConfigs_EnvTypeSetNotValid (0.00s)
+PASS
+ok      powershell-proxy        (cached)
+
+[TESTS] 🟢 Tests All Passed
+[SUCCESS] ✅ Test Powershell Proxy | Version: '0.0.1639253011' | Build Time: '0 sec'
+```
+
 ## Build
 
 Build the application by running the build.sh script on Linux or WSL:
+
+You can pass in a version as $1 parameter if you do not want to auto-generate a version based on the timestamp.
 
 ```bash
 $ ./build.sh
