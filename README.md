@@ -96,6 +96,18 @@ curl -X GET \
   'http://localhost:8000/api'
 ```
 
+python
+
+```python
+import requests
+
+reqUrl = "http://localhost:8000/api/"
+
+response = requests.request("GET", reqUrl)
+
+print(response.text)
+```
+
 javascript
 
 ```js
@@ -142,16 +154,35 @@ curl
 ```bash
 curl -X POST \
   'http://127.0.0.1:8000/api/command?depth=4' \
-  -H 'Authorization: Bearer <JWT_TOKEN> \
+  -H 'Authorization: Bearer <JWT>' \
   -H 'Content-Type: application/json' \
   -d '{"commands": ["Get-ChildItem | Select-Object Name"]}'
+```
+
+python
+
+```python
+import requests
+
+reqUrl = "http://127.0.0.1:8000/api/command?depth=4"
+
+headersList = {
+ "Authorization": "Bearer <JWT>",
+ "Content-Type": "application/json"
+}
+
+payload = "{\n\"commands\":[\"Get-ChildItem | Select-Object Name\"]\n}"
+
+response = requests.request("POST", reqUrl, data=payload,  headers=headersList)
+
+print(response.text)
 ```
 
 javascript
 
 ```javascript
 let headersList = {
-  Authorization: "Bearer <JWT_TOKEN>",
+  Authorization: "Bearer <JWT>",
   "Content-Type": "application/json",
 };
 
