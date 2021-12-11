@@ -25,6 +25,8 @@ jobs:
         echo "::set-env name=VERSION::$VERSION"
     - name: Build & Test
       run: ./build.sh $VERSION
+    - name: Structure
+      run: ls -l
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
