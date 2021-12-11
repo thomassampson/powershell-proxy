@@ -31,6 +31,7 @@ jobs:
           RELEASE_NAME: ${VERSION}-alpha
           PRE_RELEASE: true
           ALLOW_EMPTY_CHANGELOG: true
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           
       with:
         args: build/**/*/
