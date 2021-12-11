@@ -194,14 +194,15 @@ func executeCommand(body CommandRequestBody, depth int) (output bytes.Buffer, er
 }
 
 func main() {
-	log.Printf("🔵 Starting %s", AppName)
+	log.Printf("🔵 Starting %s", AppNameDefault)
+
+	validateConfig()
+
 	app := fiber.New()
 
 	app.Use(logger.New())
 	app.Use(cors.New())
 	app.Use(recover.New())
-
-	validateConfig()
 
 	// GET /api
 	app.Get("/api", func(c *fiber.Ctx) error {
