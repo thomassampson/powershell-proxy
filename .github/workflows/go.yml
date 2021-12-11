@@ -69,6 +69,16 @@ jobs:
         go-version: 1.17
     - name: Build
       run: ./build.sh $VERSION
+    - name: Upload Linux Version
+      uses: actions/upload-artifact@v2
+      with:
+        name: powershell-proxy_linux_amd64
+        path: ./build/linux/powershell-proxy_linux_amd64
+    - name: Upload Windows Version
+      uses: actions/upload-artifact@v2
+      with:
+        name: powershell-proxy_win_amd64.exe
+        path: ./build/win/powershell-proxy_win_amd64.exe
   release:
     needs: build
     runs-on: ubuntu-latest
@@ -84,7 +94,14 @@ jobs:
         export VERSION=$(cat version.txt) 
         echo "::set-env name=VERSION::$VERSION"
         echo "Version: ${VERSION}"
-
+    - name: Download Linux
+      uses: actions/download-artifact@v2
+      with:
+        name: powershell-proxy_linux_amd64
+    - name: Download Windows
+      uses: actions/download-artifact@v2
+      with:
+        name: powershell-proxy_win_amd64.exe
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
@@ -95,7 +112,7 @@ jobs:
         fail_on_unmatched_files: true
         generate_release_notes: true
         files: |
-         ./build/linux/powershell-proxy_linux_amd64
-         ./build/win/powershell-proxy_win_amd64.exe
+         powershell-proxy_linux_amd64
+         powershell-proxy_win_amd64.exe
       env:
         GITHUB_REPOSITORY: https://github.com/thomassampson/powershell-proxy
