@@ -30,6 +30,7 @@ jobs:
           RELEASE_NAME: ${VERSION}-alpha
           PRE_RELEASE: true
           ALLOW_EMPTY_CHANGELOG: true
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
           
       with:
         args: build/**/*/
