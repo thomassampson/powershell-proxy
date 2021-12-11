@@ -23,8 +23,8 @@ START=$(date +%s)
 
 BUILD_DIR="./build"
 TMP_DIR="./tmp"
-WINDOWS="${BUILD_DIR}/win/powershell-proxy_${VERSION}"
-LINUX="${BUILD_DIR}/linux/powershell-proxy_${VERSION}"
+WINDOWS="${BUILD_DIR}/win/powershell-proxy_win_amd64.exe"
+LINUX="${BUILD_DIR}/linux/powershell-proxy_linux_amd64"
 echo "[START] 🔥 Building Powershell Proxy - Version: $VERSION"
 echo "[CLEANUP] 🔵 Cleaning Build & Temp Directories - ${BUILD_DIR} & ${TMP_DIR}"
 rm -rf ${BUILD_DIR}
@@ -42,7 +42,7 @@ echo "[FAILED] ❌ Built Powershell Proxy | Version: '${VERSION}' | Build Time: 
 exit 1
 fi
 echo "[BUILD] 🔵 Compiling Windows Binary"
-env GOOS=windows GOARCH=amd64 go build -ldflags "-X main.version=$VERSION" -o "$WINDOWS.exe" .
+env GOOS=windows GOARCH=amd64 go build -ldflags "-X main.version=$VERSION" -o $WINDOWS .
 echo "[BUILD] 🟢 Windows Binary Compiled to $WINDOWS"
 echo "[BUILD] 🔵 Compiling Linux Binary"
 env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.version=$VERSION" -o $LINUX .
