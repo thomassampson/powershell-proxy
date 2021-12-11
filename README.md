@@ -78,3 +78,117 @@ $ ./powershell-proxy
 2021/12/10 19:02:40 INFO: Using OktaIssuer: https://tenant.okta.com/oauth2/default
 2021/12/10 19:02:40 🟢 Started Powershell Proxy API
 ```
+
+## Usage/Examples
+
+### Get API Info
+
+```http
+  GET /api
+```
+
+#### Example Requests
+
+curl
+
+```bash
+curl -X GET \
+  'http://localhost:8000/api'
+```
+
+javascript
+
+```js
+fetch("http://localhost:8000/api", {
+  method: "GET",
+})
+  .then(function (response) {
+    return response.text();
+  })
+  .then(function (data) {
+    console.log(data);
+  });
+```
+
+#### Example Response
+
+```
+✋ Powershell Proxy API
+
+```
+
+### Run Command
+
+```http
+  POST /api/command
+```
+
+#### Query Parameters
+
+| Parameter | Type  | Description                                                            |
+| :-------- | :---- | :--------------------------------------------------------------------- |
+| `depth`   | `int` | **Optional**. Set the depth of json responses. Default: 4 (range: 1-6) |
+
+#### Headers Parameters
+
+| Header          | Description                                              |
+| :-------------- | :------------------------------------------------------- |
+| `Authorization` | **Required**. Valid JWT Access Token generated from Okta |
+
+#### Example Requests
+
+curl
+
+```bash
+curl -X POST \
+  'http://127.0.0.1:8000/api/command?depth=4' \
+  -H 'Authorization: Bearer <JWT_TOKEN> \
+  -H 'Content-Type: application/json' \
+  -d '{"commands": ["Get-ChildItem | Select-Object Name"]}'
+```
+
+javascript
+
+```javascript
+let headersList = {
+  Authorization: "Bearer <JWT_TOKEN>",
+  "Content-Type": "application/json",
+};
+
+fetch("http://127.0.0.1:8000/api/command?depth=4", {
+  method: "POST",
+  body: '{\n"commands":["Get-ChildItem | Select-Object Name"]\n}',
+  headers: headersList,
+})
+  .then(function (response) {
+    return response.text();
+  })
+  .then(function (data) {
+    console.log(data);
+  });
+```
+
+#### Example Response
+
+```json
+[
+  {
+    "Name": "build"
+  },
+  {
+    "Name": "build.sh"
+  },
+  {
+    "Name": "go.mod"
+  },
+  {
+    "Name": "go.sum"
+  },
+  {
+    "Name": "main.go"
+  },
+  {
+    "Name": "README.md"
+  }
+]
+```
