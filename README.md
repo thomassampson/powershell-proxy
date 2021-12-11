@@ -72,7 +72,7 @@ $ ./powershell-proxy
 2021/12/10 19:02:40 INFO: IP Address: 0.0.0.0 is Valid
 2021/12/10 19:02:40 INFO: Env Variable 'PWSHPRXY_APP_NAME' not set, defaulting to 8000
 2021/12/10 19:02:40 INFO: Using Powershell Type: pwsh
-2021/12/10 19:02:40 INFO: Using AppName: AcuityAds Powershell Proxy API
+2021/12/10 19:02:40 INFO: Using AppName: Powershell Proxy API
 2021/12/10 19:02:40 INFO: Using ListenPort: 8888
 2021/12/10 19:02:40 INFO: Using ListenAddress: 0.0.0.0
 2021/12/10 19:02:40 INFO: Using OktaClientId: ***********
