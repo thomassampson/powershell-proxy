@@ -57,6 +57,7 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/pre-release'
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
