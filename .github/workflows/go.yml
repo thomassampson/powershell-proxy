@@ -7,23 +7,6 @@ on:
     branches: [ main, pre-release ]
 
 jobs:
-  set_version:
-    env:
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-    runs-on: ubuntu-latest
-    steps:
-    - name: Set Version
-      run: |
-        echo ${GITHUB_REF}
-        export VERSION=$(date +%Y).$(date +%m).$(date +%d).${GITHUB_RUN_NUMBER}
-        echo "Setting version to: ${VERSION}"
-        echo "::set-env name=VERSION::$VERSION"
-        echo $VERSION > version.txt
-    - name: Upload version
-      uses: actions/upload-artifact@v2
-      with:
-        name: version
-        path: version.txt
   test:
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
@@ -36,9 +19,9 @@ jobs:
         name: version
     - name: Set Version
       run: | 
-        export VERSION=$(cat version.txt) 
+        export VERSION=$(date +%Y).$(date +%m).$(date +%d).${GITHUB_RUN_NUMBER}
+        echo "Setting version to: ${VERSION}"
         echo "::set-env name=VERSION::$VERSION"
-        echo "Version: ${VERSION}"
 
     - uses: actions/checkout@v2
     - name: Set up Go
@@ -59,9 +42,9 @@ jobs:
         name: version
     - name: Set Version
       run: | 
-        export VERSION=$(cat version.txt) 
+        export VERSION=$(date +%Y).$(date +%m).$(date +%d).${GITHUB_RUN_NUMBER}
+        echo "Setting version to: ${VERSION}"
         echo "::set-env name=VERSION::$VERSION"
-        echo "Version: ${VERSION}"
 
     - uses: actions/checkout@v2
     - name: Set up Go
@@ -92,9 +75,9 @@ jobs:
         name: version
     - name: Set Version
       run: | 
-        export VERSION=$(cat version.txt) 
+        export VERSION=$(date +%Y).$(date +%m).$(date +%d).${GITHUB_RUN_NUMBER}
+        echo "Setting version to: ${VERSION}"
         echo "::set-env name=VERSION::$VERSION"
-        echo "Version: ${VERSION}"
     - name: Download Linux
       uses: actions/download-artifact@v2
       with:
