@@ -8,6 +8,8 @@ on:
 
 jobs:
   set_version:
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     runs-on: ubuntu-latest
     steps:
     - name: Set Version
