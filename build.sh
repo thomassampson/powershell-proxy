@@ -10,11 +10,17 @@ echo "
 ╚═╝      ╚══╝╚══╝ ╚══════╝╚═╝  ╚═╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝       ╚═╝  ╚═╝╚═╝     ╚═╝                                                                                                                                                                                                                                                                                              
 "
 
-START=$(date +%s)
+if [-z "$1"]; then
+    VERSION="$1"
+else
 MAJOR=0
 MINOR=0
 BUILD=$(date +%s)
 VERSION="$MAJOR.$MINOR.$BUILD"
+fi
+
+START=$(date +%s)
+
 BUILD_DIR="./build"
 TMP_DIR="./tmp"
 WINDOWS="${BUILD_DIR}/win/powershell-proxy_${VERSION}"
@@ -48,5 +54,3 @@ echo ""
 END=$(date +%s)
 BUILD_SECONDS=$(echo "$END - $START" | bc)
 echo "[SUCCESS] ✅ Built Powershell Proxy | Version: '${VERSION}' | Build Time: '$BUILD_SECONDS sec'"
-
-
