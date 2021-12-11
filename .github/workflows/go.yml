@@ -24,6 +24,8 @@ jobs:
         name: version
         path: version.txt
   test:
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     needs: set_version
     runs-on: ubuntu-latest
     steps:
@@ -70,6 +72,8 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
     - name: Download Version
       uses: actions/download-artifact@v2
