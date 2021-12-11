@@ -129,9 +129,9 @@ func validateConfig() (valid bool) {
 		return false
 	}
 
-	if PowerShellType == "core" {
+	if strings.ToLower(PowerShellType) == "core" {
 		Shell = "pwsh"
-	} else if PowerShellType == "windows" {
+	} else if strings.ToLower(PowerShellType) == "windows" {
 		Shell = "powershell"
 	} else {
 		log.Fatal("FATAL: Env Variable 'PWSHPRXY_TYPE' must be set to either 'core' or 'powershell'")
