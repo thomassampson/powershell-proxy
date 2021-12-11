@@ -12,10 +12,6 @@ jobs:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     runs-on: ubuntu-latest
     steps:
-    - name: Download Version
-      uses: actions/download-artifact@v2
-      with:
-        name: version
     - name: Set Version
       run: | 
         export VERSION=$(date +%Y).$(date +%m).$(date +%d).${GITHUB_RUN_NUMBER}
@@ -35,10 +31,6 @@ jobs:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     runs-on: ubuntu-latest
     steps:
-    - name: Download Version
-      uses: actions/download-artifact@v2
-      with:
-        name: version
     - name: Set Version
       run: | 
         export VERSION=$(date +%Y).$(date +%m).$(date +%d).${GITHUB_RUN_NUMBER}
@@ -68,10 +60,6 @@ jobs:
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
-    - name: Download Version
-      uses: actions/download-artifact@v2
-      with:
-        name: version
     - name: Set Version
       run: | 
         export VERSION=$(date +%Y).$(date +%m).$(date +%d).${GITHUB_RUN_NUMBER}
