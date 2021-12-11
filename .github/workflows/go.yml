@@ -32,7 +32,11 @@ jobs:
       with:
         name: version
     - name: Set Version
-      run: export VERSION=$(cat version.txt)
+      run: | 
+        export VERSION=$(cat version.txt) 
+        echo "::set-env name=VERSION::$VERSION"
+        echo "Version: ${VERSION}"
+
     - uses: actions/checkout@v2
     - name: Set up Go
       uses: actions/setup-go@v2
@@ -51,7 +55,11 @@ jobs:
       with:
         name: version
     - name: Set Version
-      run: export VERSION=$(cat version.txt)
+      run: | 
+        export VERSION=$(cat version.txt) 
+        echo "::set-env name=VERSION::$VERSION"
+        echo "Version: ${VERSION}"
+
     - uses: actions/checkout@v2
     - name: Set up Go
       uses: actions/setup-go@v2
@@ -68,7 +76,11 @@ jobs:
       with:
         name: version
     - name: Set Version
-      run: export VERSION=$(cat version.txt)
+      run: | 
+        export VERSION=$(cat version.txt) 
+        echo "::set-env name=VERSION::$VERSION"
+        echo "Version: ${VERSION}"
+
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
