@@ -120,7 +120,7 @@ func validateConfig() (valid bool) {
 	}
 
 	if AppName == "" {
-		log.Print("INFO: Env Variable 'PWSHPRXY_APP_NAME' not set, defaulting to 8000")
+		log.Printf("INFO: Env Variable 'PWSHPRXY_APP_NAME' not set, defaulting to %s", AppNameDefault)
 		AppName = AppNameDefault
 	}
 
