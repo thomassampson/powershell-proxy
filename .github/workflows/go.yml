@@ -2,9 +2,9 @@ name: Build Powershell-Proxy
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, pre-release ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, pre-release ]
 
 jobs:
   set_version:
@@ -14,7 +14,7 @@ jobs:
     steps:
     - name: Set Version
       run: |
-        export VERSION=0.0.$(date +%s)
+        export VERSION=$(date +%Y).$(date +%m).$(date +%d).${{GITHUB_RUN_NUMBER}}
         echo "Setting version to: ${VERSION}"
         echo "::set-env name=VERSION::$VERSION"
         echo $VERSION > version.txt
@@ -102,13 +102,29 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: powershell-proxy_win_amd64.exe
-    - name: Release
+    - name:  Create Pre-Release
+      if: ${{env.GITHUB_REF == 'refs/heads/pre-release'}}
       uses: softprops/action-gh-release@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         prerelease: true
-        name: ${{env.VERSION}}-alpha
-        tag_name: ${{env.VERSION}}-alpha
+        name: ${{env.VERSION}}-pre
+        tag_name: ${{env.VERSION}}-pre
+        fail_on_unmatched_files: true
+        generate_release_notes: true
+        files: |
+         powershell-proxy_linux_amd64
+         powershell-proxy_win_amd64.exe
+      env:
+        GITHUB_REPOSITORY: https://github.com/thomassampson/powershell-proxy
+    - name:  Create Release
+      if: ${{env.GITHUB_REF == 'refs/heads/main'}}
+      uses: softprops/action-gh-release@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: false
+        name: ${{env.VERSION}}
+        tag_name: ${{env.VERSION}}
         fail_on_unmatched_files: true
         generate_release_notes: true
         files: |
