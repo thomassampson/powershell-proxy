@@ -23,7 +23,7 @@ PASS
 ok      powershell-proxy        (cached)
 
 [TESTS] 🟢 Tests All Passed
-[SUCCESS] ✅ Test Powershell Proxy | Version: '0.0.1639253011' | Build Time: '0 sec'
+[SUCCESS] ✅ Test Powershell Proxy | Version: '2021.12.11.1639253011' | Build Time: '0 sec'
 ```
 
 ## Build
@@ -35,13 +35,13 @@ You can pass in a version as $1 parameter if you do not want to auto-generate a 
 ```bash
 $ ./build.sh
 
-[BUILD START] 🔥 Building Powershell Proxy - Version: 0.0.1639180082
+[BUILD START] 🔥 Building Powershell Proxy - Version: 2021.12.11.1639253011
 [BUILD] 🔵 Cleaning Build Directory ./build
 [BUILD] 🟢 Build Directory Cleaned
 [BUILD] 🔵 Compiling Windows Binary
-[BUILD] 🟢 Windows Binary Compiled to ./build/win/powershell-proxy_0.0.1639180082
+[BUILD] 🟢 Windows Binary Compiled to ./build/win/powershell-proxy_win_arm64.exe
 [BUILD] 🔵 Compiling Linux Binary
-[BUILD] 🟢 Linux Binary Compiled to ./build/linux/powershell-proxy_0.0.1639180082
+[BUILD] 🟢 Linux Binary Compiled to ./build/linux/powershell-proxy_linux_arm64
 [BUILD] ⬇️  Binaries Successfully Created
 
 ./build:
@@ -53,7 +53,7 @@ powershell-proxy_0.0.1639180082
 ./build/win:
 powershell-proxy_0.0.1639180082.exe
 
-[BUILD SUCCESS] ✅ Built Powershell Proxy | Version: '0.0.1' | Build Time: '1 sec'
+[BUILD SUCCESS] ✅ Built Powershell Proxy | Version: '2021.12.11.1639253011' | Build Time: '1 sec'
 ```
 
 ## Environment Variables
@@ -119,7 +119,7 @@ curl
 
 ```bash
 curl -X GET \
-  'http://localhost:8000/api'
+  'http://127.0.0.1:8000/api'
 ```
 
 python
@@ -127,7 +127,7 @@ python
 ```python
 import requests
 
-reqUrl = "http://localhost:8000/api/"
+reqUrl = "http://127.0.0.1:8000/api/"
 
 response = requests.request("GET", reqUrl)
 
@@ -137,7 +137,7 @@ print(response.text)
 javascript
 
 ```js
-fetch("http://localhost:8000/api", {
+fetch("http://127.0.0.1:8000/api", {
   method: "GET",
 })
   .then(function (response) {
@@ -152,6 +152,136 @@ fetch("http://localhost:8000/api", {
 
 ```
 ✋ Powershell Proxy API
+```
+
+### Get Device Code
+
+```http
+  GET /api/auth/authorize
+```
+
+Allows a user to get a device code to authenticate with Okta using Device Authorization Flow
+
+#### Example Requests
+
+curl
+
+```bash
+curl -X GET \
+  'http://127.0.0.1:8000/api/auth/authorize'
+```
+
+python
+
+```python
+import requests
+
+reqUrl = "http://127.0.0.1:8000/api/auth/authorize"
+
+response = requests.request("GET", reqUrl)
+
+print(response.text)
+```
+
+javascript
+
+```javascript
+fetch("http://127.0.0.1:8000/api/auth/authorize", {
+  method: "GET",
+})
+  .then(function (response) {
+    return response.text();
+  })
+  .then(function (data) {
+    console.log(data);
+  });
+```
+
+#### Example Response
+
+```json
+{
+  "device_code": "50632b5e-9f3d-437f-961f-2b8e25e00894",
+  "user_code": "TESTTNRD",
+  "verification_uri": "https://tenant.okta.com/activate",
+  "verification_uri_complete": "https://tenant.okta.com/activate?user_code=TESTTNRD",
+  "expires_in": 600,
+  "interval": 5
+}
+```
+
+### Get Bearer Token
+
+```http
+  POST /api/auth/token
+```
+
+Allows a user to get a bearer token once they have successfully authenticated using the user code.
+
+#### Example Requests
+
+curl
+
+```bash
+curl -X POST \
+  'http://127.0.0.1:8000/api/auth/token' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "device_code": "50632b5e-9f3d-437f-961f-2b8e25e00894"
+}'
+```
+
+python
+
+```python
+import requests
+
+reqUrl = "http://127.0.0.1:8000/api/auth/token"
+
+headersList = {
+ "Content-Type": "application/json"
+}
+
+payload = "{\n  \"device_code\": \"50632b5e-9f3d-437f-961f-2b8e25e00894\"\n}"
+
+response = requests.request("POST", reqUrl, data=payload,  headers=headersList)
+
+print(response.text)
+```
+
+javascript
+
+```javascript
+let headersList = {
+  "Content-Type": "application/json",
+};
+
+fetch("http://127.0.0.1:8000/api/auth/token", {
+  method: "POST",
+  body: '{\n  "device_code": "50632b5e-9f3d-437f-961f-2b8e25e00894"\n}',
+  headers: headersList,
+})
+  .then(function (response) {
+    return response.text();
+  })
+  .then(function (data) {
+    console.log(data);
+  });
+```
+
+#### Example Response
+
+```json
+{
+  "message": {
+    "token_type": "Bearer",
+    "expires_in": 3600,
+    "access_token": "<JWT>",
+    "scope": "openid offline_access profile",
+    "refresh_token": "<REFRESH_TOKEN>"
+  },
+  "level": "info"
+}
 ```
 
 ### Run Command

@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net"
+	"net/http"
 	"os"
 	"os/exec"
 	"strconv"
@@ -19,13 +21,29 @@ import (
 	jwtverifier "github.com/okta/okta-jwt-verifier-golang"
 )
 
-type ResponsePayload struct {
+type CommandResponseBody struct {
 	Message interface{} `json:"message"`
 	Level   string      `json:"level"`
 }
 
 type CommandRequestBody struct {
 	Commands []string `json:"commands"`
+}
+
+type TokenRequestBody struct {
+	DeviceCode string `json:"device_code"`
+}
+
+type TokenResponseBody struct {
+	TokenType    string `json:"token_type"`
+	ExpiresIn    int    `json:"expires_in"`
+	AccessToken  string `json:"access_token"`
+	Scope        string `json:"scope"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+type TokenErrorResponseBody struct {
+	Error string `json:"error"`
 }
 
 var (
@@ -154,7 +172,8 @@ func convertDepthString(sDepth string) (depth int, err error) {
 	}
 
 	if qry <= 0 || qry > 6 {
-		log.Print(strings.ToUpper(fmt.Sprintf("INFO: [user: %s] Depth must be a number between 1 and 6, defaulting to %d", Auth["sub"], JSONDepth)))
+		log.Print(strings.ToUpper(fmt.Sprintf("INFO: [user: %s] Depth must be a number between 1 and 6, defaulting to %d", Auth["sub"],
+			JSONDepth)))
 		return JSONDepth, nil
 	}
 
@@ -206,13 +225,80 @@ func main() {
 		return c.SendString(msg)
 	})
 
+	// GET /api/auth/authorize
+	app.Get("/api/auth/authorize", func(c *fiber.Ctx) error {
+
+		payload := fmt.Sprintf("scope=openid profile offline_access&client_id=%s", OktaClientId)
+
+		res, err := http.Post(fmt.Sprintf("%s/v1/device/authorize", OktaIssuer),
+			"application/x-www-form-urlencoded",
+			bytes.NewBufferString(payload))
+		if err != nil {
+			c.Status(400)
+			return c.JSON(CommandResponseBody{Message: err.Error(), Level: "error"})
+		}
+
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			c.Status(400)
+			return c.JSON(CommandResponseBody{Message: err.Error(), Level: "error"})
+		}
+
+		return c.Send(body)
+	})
+
+	// POST /api/auth/token
+	app.Post("/api/auth/token", func(c *fiber.Ctx) error {
+
+		var reqBody TokenRequestBody
+		json.Unmarshal(c.Body(), &reqBody)
+
+		payload := fmt.Sprintf("grant_type=urn:ietf:params:oauth:grant-type:device_code&client_id=%s&device_code=%s",
+			OktaClientId,
+			reqBody.DeviceCode)
+
+		res, err := http.Post(fmt.Sprintf("%s/v1/token", OktaIssuer),
+			"application/x-www-form-urlencoded",
+			bytes.NewBufferString(payload))
+		if err != nil {
+			c.Status(400)
+			return c.JSON(CommandResponseBody{Message: err.Error(), Level: "error"})
+		}
+
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			c.Status(400)
+			return c.JSON(CommandResponseBody{Message: err.Error(), Level: "error"})
+		}
+
+		if res.StatusCode != 200 {
+			var tokenRes TokenErrorResponseBody
+			json.Unmarshal(body, &tokenRes)
+			c.Status(400)
+			return c.JSON(CommandResponseBody{Message: tokenRes.Error, Level: "error"})
+		} else {
+			var tokenRes TokenResponseBody
+			json.Unmarshal(body, &tokenRes)
+
+			c.Status(201)
+			return c.JSON(CommandResponseBody{Message: TokenResponseBody{
+				TokenType:    tokenRes.TokenType,
+				ExpiresIn:    tokenRes.ExpiresIn,
+				AccessToken:  tokenRes.AccessToken,
+				Scope:        tokenRes.Scope,
+				RefreshToken: tokenRes.RefreshToken},
+				Level: "info"})
+		}
+
+	})
+
 	// POST /api/command
 	app.Post("/api/command", secureRoute, func(c *fiber.Ctx) error {
 
 		depth, err := convertDepthString(c.Query("depth"))
 		if err != nil {
 			c.Status(400)
-			return c.JSON(ResponsePayload{Message: err.Error(), Level: "error"})
+			return c.JSON(CommandResponseBody{Message: err.Error(), Level: "error"})
 		}
 
 		var body CommandRequestBody
@@ -220,13 +306,14 @@ func main() {
 
 		if body.Commands == nil {
 			c.Status(400)
-			return c.JSON(ResponsePayload{Message: strings.ToUpper("You must specify the 'commands' property in the request body."), Level: "error"})
+			return c.JSON(CommandResponseBody{Message: strings.ToUpper("You must specify the 'commands' property in the request body."),
+				Level: "error"})
 		}
 
 		output, err := executeCommand(body, depth)
 		if err != nil {
 			c.Status(400)
-			return c.JSON(ResponsePayload{Message: err.Error(), Level: "error"})
+			return c.JSON(CommandResponseBody{Message: err.Error(), Level: "error"})
 		}
 
 		c.Status(200)
