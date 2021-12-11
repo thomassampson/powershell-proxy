@@ -82,7 +82,7 @@ func checkIPAddress(ip string) bool {
 	}
 }
 
-func validateConfig() {
+func validateConfig() (valid bool) {
 	if ListenAddress == "" {
 		log.Printf("INFO: Env Variable 'PWSHPRXY_LISTEN_ADDR' not set, defaulting to %s", ListenAddressDefault)
 		ListenAddress = ListenAddressDefault
@@ -90,6 +90,7 @@ func validateConfig() {
 
 	if !checkIPAddress(ListenAddress) {
 		log.Fatalf("FATAL: Env Variable 'PWSHPRXY_LISTEN_ADDR' is set, but '%s' is not a valid ipv4 address.", ListenAddress)
+		return false
 	}
 
 	if ListenPort == "" {
@@ -99,19 +100,23 @@ func validateConfig() {
 		_, err := strconv.Atoi(ListenPort)
 		if err != nil {
 			log.Fatalf("FATAL: Env Variable 'PWSHPRXY_LISTEN_PORT' is set, but '%s' is not a number.", ListenPort)
+			return false
 		}
 	}
 
 	if OktaClientId == "" {
 		log.Fatal("FATAL: Env Variable 'PWSHPRXY_OKTA_CLIENT_ID' not set.")
+		return false
 	}
 
 	if OktaAudience == "" {
 		log.Fatal("FATAL: Env Variable 'PWSHPRXY_OKTA_AUDIENCE' not set.")
+		return false
 	}
 
 	if OktaIssuer == "" {
 		log.Fatal("FATAL: Env Variable 'PWSHPRXY_OKTA_ISSUER' not set.")
+		return false
 	}
 
 	if AppName == "" {
@@ -121,6 +126,7 @@ func validateConfig() {
 
 	if PowerShellType == "" {
 		log.Fatal("FATAL: Env Variable 'PWSHPRXY_TYPE' not set, cannot start webserver...")
+		return false
 	}
 
 	if PowerShellType == "core" {
@@ -129,6 +135,7 @@ func validateConfig() {
 		Shell = "powershell"
 	} else {
 		log.Fatal("FATAL: Env Variable 'PWSHPRXY_TYPE' must be set to either 'core' or 'powershell'")
+		return false
 	}
 
 	log.Printf("INFO: Using Powershell Type: %s", Shell)
@@ -138,6 +145,8 @@ func validateConfig() {
 	log.Printf("INFO: Using OktaClientId: %s", OktaClientId)
 	log.Printf("INFO: Using OktaAudience: %s", OktaAudience)
 	log.Printf("INFO: Using OktaIssuer: %s", OktaIssuer)
+
+	return true
 }
 
 func convertDepthString(sDepth string) (depth int, err error) {

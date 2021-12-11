@@ -126,7 +126,6 @@ fetch("http://localhost:8000/api", {
 
 ```
 ✋ Powershell Proxy API
-
 ```
 
 ### Run Command
@@ -223,3 +222,7 @@ fetch("http://127.0.0.1:8000/api/command?depth=4", {
   }
 ]
 ```
+
+## Author
+
+- [@thomassampson](https://www.github.com/thomassampson)
