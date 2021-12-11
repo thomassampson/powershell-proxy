@@ -18,6 +18,7 @@ jobs:
         echo "Setting version to: ${VERSION}"
         echo "::set-env name=VERSION::$VERSION"
   test:
+    needs: set_version
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -28,6 +29,7 @@ jobs:
     - name: test
       run: ./test.sh $VERSION
   build:
+    needs: set_version
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     runs-on: ubuntu-latest
@@ -39,6 +41,7 @@ jobs:
     - name: Build
       run: ./build.sh $VERSION
   release:
+    needs: build 
     runs-on: ubuntu-latest
     steps:
     - name: Release
