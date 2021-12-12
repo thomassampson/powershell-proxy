@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCheckIPAddressNotValid(t *testing.T) {
+func TestCmds_CheckIPAddressNotValid(t *testing.T) {
 
 	ip := "0.0.0"
 
@@ -17,7 +17,7 @@ func TestCheckIPAddressNotValid(t *testing.T) {
 
 }
 
-func TestCheckIPAddressValid(t *testing.T) {
+func TestCmds_CheckIPAddressValid(t *testing.T) {
 
 	ip := "0.0.0.0"
 
@@ -25,7 +25,7 @@ func TestCheckIPAddressValid(t *testing.T) {
 
 }
 
-func TestConvertDepthStringValid(t *testing.T) {
+func TestCmds_ConvertDepthStringValid(t *testing.T) {
 
 	depth := "5"
 
@@ -37,7 +37,7 @@ func TestConvertDepthStringValid(t *testing.T) {
 
 }
 
-func TestConvertDepthStringNotValid_NotInt(t *testing.T) {
+func TestCmds_ConvertDepthStringNotValid_NotInt(t *testing.T) {
 
 	depth := "eeewrwe"
 
@@ -49,7 +49,7 @@ func TestConvertDepthStringNotValid_NotInt(t *testing.T) {
 
 }
 
-func TestConvertDepthStringNotValid_ToBig(t *testing.T) {
+func TestCmds_ConvertDepthStringNotValid_ToBig(t *testing.T) {
 
 	depth := "7"
 
@@ -60,7 +60,7 @@ func TestConvertDepthStringNotValid_ToBig(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func TestConvertDepthStringNotValid_ToSmall(t *testing.T) {
+func TestCmds_ConvertDepthStringNotValid_ToSmall(t *testing.T) {
 
 	depth := "0"
 
