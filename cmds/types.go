@@ -1,5 +1,14 @@
 package cmds
 
+import (
+	"io"
+	"net/http"
+)
+
+type Http interface {
+	Post(url string, contentType string, body io.Reader) (res *http.Response, err error)
+}
+
 type CommandResponseBody struct {
 	Message interface{} `json:"message"`
 	Level   string      `json:"level"`

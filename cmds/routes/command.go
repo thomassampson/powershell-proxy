@@ -26,6 +26,12 @@ func Command(c *fiber.Ctx) error {
 			Level: "error"})
 	}
 
+	if body.Commands[0] == "" {
+		c.Status(400)
+		return c.JSON(cmds.CommandResponseBody{Message: strings.ToUpper("'commands' property in the request body cannot be empty."),
+			Level: "error"})
+	}
+
 	output, err := cmds.ExecuteCommand(body, depth)
 	if err != nil {
 		c.Status(400)

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os/exec"
 
 	cmds "powershell-proxy/cmds"
 	routes "powershell-proxy/cmds/routes"
@@ -16,6 +17,8 @@ import (
 
 func main() {
 	log.Printf("🔵 Starting %s", cmds.AppNameDefault)
+
+	cmds.ExecCommand = exec.Command
 
 	err := cmds.ValidateConfig()
 	if err != nil {

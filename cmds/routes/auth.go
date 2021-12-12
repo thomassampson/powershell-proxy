@@ -12,6 +12,7 @@ import (
 )
 
 func CallOktaTokenEndpoint(body []byte) (res *http.Response, err error) {
+
 	var reqBody cmds.TokenRequestBody
 	json.Unmarshal(body, &reqBody)
 
