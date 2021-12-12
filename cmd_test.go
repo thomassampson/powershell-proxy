@@ -4,6 +4,8 @@ import (
 	"os"
 	"testing"
 
+	cmds "powershell-proxy/cmds"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +13,7 @@ func TestCheckIPAddressNotValid(t *testing.T) {
 
 	ip := "0.0.0"
 
-	assert.False(t, checkIPAddress(ip))
+	assert.False(t, cmds.CheckIPAddress(ip))
 
 }
 
@@ -19,7 +21,7 @@ func TestCheckIPAddressValid(t *testing.T) {
 
 	ip := "0.0.0.0"
 
-	assert.True(t, checkIPAddress(ip))
+	assert.True(t, cmds.CheckIPAddress(ip))
 
 }
 
@@ -29,7 +31,7 @@ func TestConvertDepthStringValid(t *testing.T) {
 
 	expected := 5
 
-	actual, _ := convertDepthString(depth)
+	actual, _ := cmds.ConvertDepthString(depth)
 
 	assert.Equal(t, expected, actual)
 
@@ -41,7 +43,7 @@ func TestConvertDepthStringNotValid_NotInt(t *testing.T) {
 
 	expected := -1
 
-	actual, _ := convertDepthString(depth)
+	actual, _ := cmds.ConvertDepthString(depth)
 
 	assert.Equal(t, expected, actual)
 
@@ -53,7 +55,7 @@ func TestConvertDepthStringNotValid_ToBig(t *testing.T) {
 
 	expected := 4
 
-	actual, _ := convertDepthString(depth)
+	actual, _ := cmds.ConvertDepthString(depth)
 
 	assert.Equal(t, expected, actual)
 }
@@ -64,7 +66,7 @@ func TestConvertDepthStringNotValid_ToSmall(t *testing.T) {
 
 	expected := 4
 
-	actual, _ := convertDepthString(depth)
+	actual, _ := cmds.ConvertDepthString(depth)
 
 	assert.Equal(t, expected, actual)
 
@@ -80,15 +82,15 @@ func TestValidateConfigs_EnvVarNotSet(t *testing.T) {
 	os.Unsetenv("PWSHPRXY_OKTA_ISSUER")
 	os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	actual := validateConfig()
+	actual := cmds.ValidateConfig()
 	assert.Error(t, actual)
 	assert.EqualError(t, actual, "FATAL: Env Variable 'PWSHPRXY_OKTA_CLIENT_ID' not set")
 
@@ -110,17 +112,17 @@ func TestValidateConfigs_EnvAppNameNotSet(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	assert.Equal(t, "Powershell Proxy API", AppNameDefault)
-	assert.Nil(t, validateConfig())
-	assert.Equal(t, AppNameDefault, AppName)
+	assert.Equal(t, "Powershell Proxy API", cmds.AppNameDefault)
+	assert.Nil(t, cmds.ValidateConfig())
+	assert.Equal(t, cmds.AppNameDefault, cmds.AppName)
 
 }
 
@@ -141,17 +143,17 @@ func TestValidateConfigs_EnvAppNameSet(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	assert.Equal(t, "Powershell Proxy API", AppNameDefault)
-	assert.Nil(t, validateConfig())
-	assert.Equal(t, "App", AppName)
+	assert.Equal(t, "Powershell Proxy API", cmds.AppNameDefault)
+	assert.Nil(t, cmds.ValidateConfig())
+	assert.Equal(t, "App", cmds.AppName)
 
 }
 
@@ -171,17 +173,17 @@ func TestValidateConfigs_EnvListenAddrNotSet(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	assert.Equal(t, "0.0.0.0", ListenAddressDefault)
-	assert.Nil(t, validateConfig())
-	assert.Equal(t, ListenAddressDefault, ListenAddress)
+	assert.Equal(t, "0.0.0.0", cmds.ListenAddressDefault)
+	assert.Nil(t, cmds.ValidateConfig())
+	assert.Equal(t, cmds.ListenAddressDefault, cmds.ListenAddress)
 
 }
 
@@ -202,15 +204,15 @@ func TestValidateConfigs_EnvListenAddrNotValid(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	actual := validateConfig()
+	actual := cmds.ValidateConfig()
 	assert.Error(t, actual)
 	assert.EqualError(t, actual, "FATAL: Env Variable 'PWSHPRXY_LISTEN_ADDR' is set, but '0.0.0' is not a valid ipv4 address")
 
@@ -235,17 +237,17 @@ func TestValidateConfigs_EnvListenAddrSetValid(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
 	assert.Equal(t, ip, os.Getenv("PWSHPRXY_LISTEN_ADDR"))
-	assert.Nil(t, validateConfig())
-	assert.Equal(t, ip, ListenAddress)
+	assert.Nil(t, cmds.ValidateConfig())
+	assert.Equal(t, ip, cmds.ListenAddress)
 
 }
 
@@ -268,17 +270,17 @@ func TestValidateConfigs_EnvListenPortSetValid(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
 	assert.Equal(t, port, os.Getenv("PWSHPRXY_LISTEN_PORT"))
-	assert.Nil(t, validateConfig())
-	assert.Equal(t, port, ListenPort)
+	assert.Nil(t, cmds.ValidateConfig())
+	assert.Equal(t, port, cmds.ListenPort)
 
 }
 
@@ -299,15 +301,15 @@ func TestValidateConfigs_EnvListenPortNotValid(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	actual := validateConfig()
+	actual := cmds.ValidateConfig()
 	assert.Error(t, actual)
 	assert.EqualError(t, actual, "FATAL: Env Variable 'PWSHPRXY_LISTEN_PORT' is set, but 'notaport' is not a number")
 }
@@ -328,17 +330,17 @@ func TestValidateConfigs_NoEnvListenPort(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	assert.Equal(t, "8000", ListenPortDefault)
-	assert.Nil(t, validateConfig())
-	assert.Equal(t, ListenPortDefault, ListenPort)
+	assert.Equal(t, "8000", cmds.ListenPortDefault)
+	assert.Nil(t, cmds.ValidateConfig())
+	assert.Equal(t, cmds.ListenPortDefault, cmds.ListenPort)
 
 }
 
@@ -358,15 +360,15 @@ func TestValidateConfigs_EnvOktaClientIdNotSet(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	actual := validateConfig()
+	actual := cmds.ValidateConfig()
 	assert.Error(t, actual)
 	assert.EqualError(t, actual, "FATAL: Env Variable 'PWSHPRXY_OKTA_CLIENT_ID' not set")
 
@@ -388,15 +390,15 @@ func TestValidateConfigs_EnvOktaIssuerNotSet(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	actual := validateConfig()
+	actual := cmds.ValidateConfig()
 	assert.Error(t, actual)
 	assert.EqualError(t, actual, "FATAL: Env Variable 'PWSHPRXY_OKTA_ISSUER' not set")
 
@@ -418,15 +420,15 @@ func TestValidateConfigs_EnvOktaAudienceNotSet(t *testing.T) {
 	defer os.Unsetenv("PWSHPRXY_OKTA_ISSUER")
 	os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	actual := validateConfig()
+	actual := cmds.ValidateConfig()
 	assert.Error(t, actual)
 	assert.EqualError(t, actual, "FATAL: Env Variable 'PWSHPRXY_OKTA_AUDIENCE' not set")
 
@@ -446,15 +448,15 @@ func TestValidateConfigs_EnvOktaNotSet(t *testing.T) {
 	os.Unsetenv("PWSHPRXY_OKTA_ISSUER")
 	os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	actual := validateConfig()
+	actual := cmds.ValidateConfig()
 	assert.Error(t, actual)
 	assert.EqualError(t, actual, "FATAL: Env Variable 'PWSHPRXY_OKTA_CLIENT_ID' not set")
 }
@@ -476,18 +478,18 @@ func TestValidateConfigs_EnvOktaSet(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	assert.Nil(t, validateConfig())
-	assert.Equal(t, "1234", OktaAudience)
-	assert.Equal(t, "1234", OktaClientId)
-	assert.Equal(t, "1234", OktaIssuer)
+	assert.Nil(t, cmds.ValidateConfig())
+	assert.Equal(t, "1234", cmds.OktaAudience)
+	assert.Equal(t, "1234", cmds.OktaClientId)
+	assert.Equal(t, "1234", cmds.OktaIssuer)
 
 }
 
@@ -508,23 +510,23 @@ func TestValidateConfigs_EnvAllSetValid(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	assert.Nil(t, validateConfig())
-	assert.Equal(t, "0.0.0.0", ListenAddress)
-	assert.Equal(t, "App", AppName)
-	assert.Equal(t, "8000", ListenPort)
-	assert.Equal(t, "core", PowerShellType)
-	assert.Equal(t, "1234", OktaAudience)
-	assert.Equal(t, "1234", OktaClientId)
-	assert.Equal(t, "1234", OktaIssuer)
-	assert.Equal(t, "pwsh", Shell)
+	assert.Nil(t, cmds.ValidateConfig())
+	assert.Equal(t, "0.0.0.0", cmds.ListenAddress)
+	assert.Equal(t, "App", cmds.AppName)
+	assert.Equal(t, "8000", cmds.ListenPort)
+	assert.Equal(t, "core", cmds.PowerShellType)
+	assert.Equal(t, "1234", cmds.OktaAudience)
+	assert.Equal(t, "1234", cmds.OktaClientId)
+	assert.Equal(t, "1234", cmds.OktaIssuer)
+	assert.Equal(t, "pwsh", cmds.Shell)
 
 }
 
@@ -545,17 +547,17 @@ func TestValidateConfigs_EnvTypeSetToCore(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	assert.Equal(t, "core", PowerShellType)
-	assert.Nil(t, validateConfig())
-	assert.Equal(t, "pwsh", Shell)
+	assert.Equal(t, "core", cmds.PowerShellType)
+	assert.Nil(t, cmds.ValidateConfig())
+	assert.Equal(t, "pwsh", cmds.Shell)
 
 }
 
@@ -576,17 +578,17 @@ func TestValidateConfigs_EnvTypeSetToWindows(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	assert.Equal(t, "windows", PowerShellType)
-	assert.Nil(t, validateConfig())
-	assert.Equal(t, "powershell", Shell)
+	assert.Equal(t, "windows", cmds.PowerShellType)
+	assert.Nil(t, cmds.ValidateConfig())
+	assert.Equal(t, "powershell", cmds.Shell)
 
 }
 
@@ -606,15 +608,15 @@ func TestValidateConfigs_EnvTypeNotSet(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	actual := validateConfig()
+	actual := cmds.ValidateConfig()
 	assert.Error(t, actual)
 	assert.EqualError(t, actual, "FATAL: Env Variable 'PWSHPRXY_TYPE' not set, cannot start webserver")
 
@@ -638,15 +640,15 @@ func TestValidateConfigs_EnvTypeSetNotValid(t *testing.T) {
 	os.Setenv("PWSHPRXY_OKTA_AUDIENCE", "1234")
 	defer os.Unsetenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
-	ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
-	AppName = os.Getenv("PWSHPRXY_APP_NAME")
-	PowerShellType = os.Getenv("PWSHPRXY_TYPE")
-	OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
-	OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
-	OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
+	cmds.ListenAddress = os.Getenv("PWSHPRXY_LISTEN_ADDR")
+	cmds.ListenPort = os.Getenv("PWSHPRXY_LISTEN_PORT")
+	cmds.AppName = os.Getenv("PWSHPRXY_APP_NAME")
+	cmds.PowerShellType = os.Getenv("PWSHPRXY_TYPE")
+	cmds.OktaIssuer = os.Getenv("PWSHPRXY_OKTA_ISSUER")
+	cmds.OktaClientId = os.Getenv("PWSHPRXY_OKTA_CLIENT_ID")
+	cmds.OktaAudience = os.Getenv("PWSHPRXY_OKTA_AUDIENCE")
 
-	actual := validateConfig()
+	actual := cmds.ValidateConfig()
 	assert.Error(t, actual)
 	assert.EqualError(t, actual, "FATAL: Env Variable 'PWSHPRXY_TYPE' must be set to either 'core' or 'powershell'")
 }
