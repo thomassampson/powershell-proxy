@@ -26,7 +26,7 @@ START=$(date +%s)
 
 echo "[TESTS] 🔵 Running Tests"
 echo ""
-if go test -v .; then
+if go test -v ./tests; then
   echo ""
   echo "[TESTS] 🟢 Tests All Passed"
 else
