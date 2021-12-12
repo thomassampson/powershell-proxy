@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
 	"testing"
 
 	cmds "powershell-proxy/cmds"
@@ -9,7 +11,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCheckIPAddressNotValid(t *testing.T) {
+var (
+	TEST_COMMAND_SUCCESS_STDOUT string = "This is the test standard out from the mock function"
+	TEST_COMMAND_FAIL_STDERR    string = "This is the test standard error from the mock function"
+)
+
+func TestCmds_CheckIPAddressNotValid(t *testing.T) {
 
 	ip := "0.0.0"
 
@@ -17,7 +24,7 @@ func TestCheckIPAddressNotValid(t *testing.T) {
 
 }
 
-func TestCheckIPAddressValid(t *testing.T) {
+func TestCmds_CheckIPAddressValid(t *testing.T) {
 
 	ip := "0.0.0.0"
 
@@ -25,7 +32,7 @@ func TestCheckIPAddressValid(t *testing.T) {
 
 }
 
-func TestConvertDepthStringValid(t *testing.T) {
+func TestCmds_ConvertDepthStringValid(t *testing.T) {
 
 	depth := "5"
 
@@ -37,7 +44,7 @@ func TestConvertDepthStringValid(t *testing.T) {
 
 }
 
-func TestConvertDepthStringNotValid_NotInt(t *testing.T) {
+func TestCmds_ConvertDepthStringNotValid_NotInt(t *testing.T) {
 
 	depth := "eeewrwe"
 
@@ -49,7 +56,7 @@ func TestConvertDepthStringNotValid_NotInt(t *testing.T) {
 
 }
 
-func TestConvertDepthStringNotValid_ToBig(t *testing.T) {
+func TestCmds_ConvertDepthStringNotValid_ToBig(t *testing.T) {
 
 	depth := "7"
 
@@ -60,7 +67,7 @@ func TestConvertDepthStringNotValid_ToBig(t *testing.T) {
 	assert.Equal(t, expected, actual)
 }
 
-func TestConvertDepthStringNotValid_ToSmall(t *testing.T) {
+func TestCmds_ConvertDepthStringNotValid_ToSmall(t *testing.T) {
 
 	depth := "0"
 
@@ -651,4 +658,53 @@ func TestValidateConfigs_EnvTypeSetNotValid(t *testing.T) {
 	actual := cmds.ValidateConfig()
 	assert.Error(t, actual)
 	assert.EqualError(t, actual, "FATAL: Env Variable 'PWSHPRXY_TYPE' must be set to either 'core' or 'powershell'")
+}
+
+func TestExecRun_Success(t *testing.T) {
+	if os.Getenv("GO_TEST_PROCESS") != "1" {
+		return
+	}
+	fmt.Fprint(os.Stdout, TEST_COMMAND_SUCCESS_STDOUT)
+	os.Exit(0)
+}
+
+func Mock_ExecCommand_Success(command string, args ...string) *exec.Cmd {
+	cs := []string{"-test.run=TestExecRun_Success", "--", command}
+	cs = append(cs, args...)
+	cmd := exec.Command(os.Args[0], cs...)
+	cmd.Env = []string{"GO_TEST_PROCESS=1"}
+	return cmd
+}
+
+func TestExecCommand_Success(t *testing.T) {
+	cmds.ExecCommand = Mock_ExecCommand_Success
+	defer func() { cmds.ExecCommand = exec.Command }()
+	output, err := cmds.ExecuteCommand(cmds.CommandRequestBody{Commands: []string{"test"}}, 1)
+	assert.Nil(t, err)
+	assert.Equal(t, output.String(), TEST_COMMAND_SUCCESS_STDOUT)
+}
+
+func TestExecRun_Fail(t *testing.T) {
+	if os.Getenv("GO_TEST_PROCESS") != "1" {
+		return
+	}
+	fmt.Fprint(os.Stderr, TEST_COMMAND_FAIL_STDERR)
+	os.Exit(0)
+}
+
+func Mock_ExecCommand_Fail(command string, args ...string) *exec.Cmd {
+	cs := []string{"-test.run=TestExecRun_Fail", "--", command}
+	cs = append(cs, args...)
+	cmd := exec.Command(os.Args[0], cs...)
+	cmd.Env = []string{"GO_TEST_PROCESS=1"}
+	return cmd
+}
+
+func TestExecCommand_Fail(t *testing.T) {
+	cmds.ExecCommand = Mock_ExecCommand_Fail
+	defer func() { cmds.ExecCommand = exec.Command }()
+	output, err := cmds.ExecuteCommand(cmds.CommandRequestBody{Commands: []string{"test"}}, 1)
+	assert.Equal(t, output.Len(), 0)
+	assert.NotNil(t, err)
+	assert.Equal(t, err.Error(), TEST_COMMAND_FAIL_STDERR)
 }

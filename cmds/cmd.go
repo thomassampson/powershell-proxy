@@ -14,6 +14,8 @@ import (
 	jwtverifier "github.com/okta/okta-jwt-verifier-golang"
 )
 
+type ExecContext = func(name string, arg ...string) *exec.Cmd
+
 var (
 	ListenAddress        string = os.Getenv("PWSHPRXY_LISTEN_ADDR")
 	ListenPort           string = os.Getenv("PWSHPRXY_LISTEN_PORT")
@@ -28,6 +30,7 @@ var (
 	ListenAddressDefault string = "0.0.0.0"
 	ListenPortDefault    string = "8000"
 	AppNameDefault       string = "Powershell Proxy API"
+	ExecCommand          ExecContext
 )
 
 func ValidateJwt(jwt string) (token *jwtverifier.Jwt, err error) {
@@ -147,14 +150,18 @@ func ExecuteCommand(body CommandRequestBody, depth int) (output bytes.Buffer, er
 
 	log.Printf("INFO: [user: %s] Running Commands: %s %v", Auth["sub"], Shell, args)
 
-	cmd := exec.Command(Shell, args...)
-
+	cmd := ExecCommand(Shell, args...)
+	cmdError := bytes.Buffer{}
 	cmd.Stdout = &output
-
+	cmd.Stderr = &cmdError
 	err = cmd.Run()
 	if err != nil {
 		log.Print(err.Error())
 		return bytes.Buffer{}, err
+	}
+
+	if cmdError.Len() != 0 {
+		return bytes.Buffer{}, errors.New(cmdError.String())
 	}
 
 	return output, nil
